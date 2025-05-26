@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Control de Cerradura RFID</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script defer src="script.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Cerraduras RFID</h1>
+    <div id="cerradurasContainer" class="cerraduras-wrapper"></div>
+  </div>
+
+  
+  <!-- Modal Historial -->
+  <div id="modalHistorial" class="modal">
+    <div class="modal-content">
+      <span id="cerrarModal" class="close">&times;</span>
+      <h3 id="tituloHistorial">Historial</h3>
+      <ul id="contenidoHistorial"></ul>
+    </div>
+  </div>
+
+  <!-- Botón flotante: Usuarios -->
+  <button id="botonUsuarios" class="boton-flotante">🔑 Profesores</button>
+
+  <!-- Modal Usuarios -->
+  <div id="modalUsuarios" class="modal">
+    <div class="modal-content">
+      <span id="cerrarUsuarios" class="close">&times;</span>
+      <h3>Usuarios autorizados</h3>
+      <ul id="listaUsuarios"></ul>
+      <hr>
+      <button id="btnMostrarFormulario">➕ Nuevo usuario</button>
+      <div id="formularioNuevoUsuario" style="display: none; margin-top: 10px;">
+        <input type="text" id="nuevoNombre" placeholder="Nombre del profesor">
+        <input type="text" id="nuevoID" placeholder="Número de control">
+        <input type="text" id="nuevoApellido" placeholder="Apellido del profesor">
+        <input type="text" id="nuevoCorreo" placeholder="Email">
+        <input type="password" id="nuevoContraseña" placeholder="Contraseña">
+        <input type="password" id="confirmarContraseña" placeholder="Confirmar contraseña">
+        <input type="text" id="nuevoRol" placeholder="Tipo de cuenta">
+        <br>
+        <button id="btnAgregarUsuario">✅ Registrar usuario</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón flotante: Agregar cerradura -->
+  <button id="botonAgregarCerradura" class="boton-flotante" style="bottom: 90px;">➕ Cerradura</button>
+
+  <!-- Modal Agregar Cerradura -->
+  <div id="modalAgregarCerradura" class="modal">
+    <div class="modal-content">
+      <span id="cerrarAgregarCerradura" class="close">&times;</span>
+      <h3>Agregar nueva cerradura</h3>
+      <input type="text" id="macCerradura" placeholder="Dirección MAC (ej: 2C:F4:32:7B:D9:8C)">
+      <input type="text" id="nombreCerradura" placeholder="Nombre (ej: Puerta principal)">
+            <input type="text" id="ubicacionCerradura" placeholder="Ubicacion">
+      <br><br>
+      <button id="agregarCerraduraBtn">✅ Agregar</button>
+    </div>
+  </div>
+
+
+  <!-- Botón para abrir modal de Horarios -->
+<button id="botonHorarios">🗓️ Horarios</button>
+<!-- Modal Horarios -->
+<div id="modalHorarios" class="modal">
+  <div class="modal-content" style="text-align: center;">
+    <span id="cerrarModalHorarios" class="cerrar">&times;</span>
+    <h2>Agregar Horario</h2>
+    <form id="formHorario">
+        <div class="grupo-formulario">
+        <label>Días:</label>
+          <div id="diasSemanaCheckboxes" class="checkbox-grid">
+              <label><input type="checkbox" name="dias" value="Lunes"> Lunes</label>
+              <label><input type="checkbox" name="dias" value="Martes"> Martes</label>
+              <label><input type="checkbox" name="dias" value="Miércoles"> Miércoles</label>
+              <label><input type="checkbox" name="dias" value="Jueves"> Jueves</label>
+              <label><input type="checkbox" name="dias" value="Viernes"> Viernes</label>
+        <!-- <label><input type="checkbox" name="dias" value="Sábado"> Sábado</label> -->
+          </div>
+        </div>
+
+      <div class="grupo-formulario fila-horas">
+          <div>
+              <label for="inputHoraInicio">Hora inicio:</label>
+              <input type="time" id="inputHoraInicio">
+          </div>
+          <div>
+              <label for="inputHoraFin">Hora fin:</label>
+              <input type="time" id="inputHoraFin">
+          </div>
+      </div>
+
+      <label>Aula:</label>
+      <select id="selectAula"></select>
+      <label>Profesor:</label>
+      <select id="selectProfesor"></select>
+      <button type="submit">Guardar Horario</button>
+    </form>
+    <ul id="listaHorarios"></ul>
+  </div>
+</div>
+
+
+</body>
+</html>

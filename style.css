@@ -1,0 +1,338 @@
+/* ─────────── GENERAL ─────────── */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: #2d70ff;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: #e3ecff;
+  
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ─────────── CERRADURA CARD ─────────── */
+.cerradura {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  text-align: left;
+  background-color: #f9f9f9;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.cerradura:not(:last-child) {
+  border-bottom: 1px dashed #ccc;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.estado {
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  margin-left: 10px;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+.estado.abierto {
+  background: #28a745;
+}
+
+.estado.cerrado {
+  background: #dc3545;
+}
+.estado.abierto::before {
+  content: "✔ ";
+}
+
+.estado.cerrado::before {
+  content: "✖ ";
+}
+
+/* ─────────── BOTONES ─────────── */
+button {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  margin: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+
+.boton-accion {
+  font-weight: bold;
+}
+
+.boton-accion.cerrar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.boton-accion.abrir {
+  background-color: #28a745;
+  color: white;
+}
+
+/* ─────────── HISTORIAL ─────────── */
+.historial {
+  text-align: left;
+  font-size: 0.9em;
+  color: #333;
+}
+
+/* ─────────── MODALES ─────────── */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.modal.mostrar {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  text-align: left;
+  animation: fadeInModal 0.3s ease-out;
+ max-height: 80vh;
+  overflow-y: auto;
+
+}
+
+
+@keyframes fadeInModal {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-content  input:not([type="time"]) {
+  margin: 5px 0;
+  width: 95%;
+  padding: 6px;
+  font-size: 14px;
+}
+
+/* ─────────── BOTÓN CIERRE MODAL ─────────── */
+.close {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  font-size: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ─────────── BOTÓN FLOTANTE ─────────── */
+.boton-flotante {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background-color: #ffffff;
+  color: #007bff;
+  border: 2px solid #007bff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+
+.boton-flotante:hover {
+  background-color: #007bff;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* ─────────── LISTAS USUARIOS ─────────── */
+#listaUsuarios li {
+  list-style-type: none;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+}
+
+/* ─────────── INPUTS MODALES ─────────── */
+input[type="text"] {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+}
+input[type="email"] {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+}
+input[type="password"] {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+}
+input[type="time"] {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+}
+input[type="submit"] {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+}
+select{
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+}
+
+/* ─────────── HORARIOS ─────────── */
+.horario {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-left: 5px solid #2d70ff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  text-align: left;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: box-shadow 0.3s;
+}
+
+.horario:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.horario strong {
+  color: #2d70ff;
+  display: block;
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+
+.horario-info {
+  color: #333;
+  font-size: 0.95em;
+  margin-bottom: 8px;
+}
+
+.horario .acciones {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.horario .acciones button {
+  margin-left: 6px;
+  background-color: #f0f0f0;
+  padding: 4px 8px;
+  font-size: 0.85em;
+  border-radius: 6px;
+}
+
+.horario .acciones button:hover {
+  background-color: #e0e0e0;
+}
+
+.horario .btn-editar {
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.horario .btn-eliminar {
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin: 10px 0;
+  margin-left: 50px;
+  text-align: left;
+  }
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.fila-horas {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fila-horas div {
+  flex: 1;
+}
+.fila-horas input[type="time"] {
+  max-width: 120px;
+  width: 100%;
+}
+
+.grupo-formulario {
+  margin-bottom: 12px;
+}
+
+.grupo-formulario label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #333;
+}
