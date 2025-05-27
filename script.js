@@ -62,4 +62,6 @@ window.onload = () => {
   if (typeof Usuarios !== "undefined" && Usuarios.iniciar) Usuarios.iniciar();
   if (typeof Cerraduras !== "undefined" && Cerraduras.iniciar) Cerraduras.iniciar();
   if (typeof Horarios !== "undefined" && Horarios.iniciar) Horarios.iniciar();
+  if (typeof AgregarCerradura !== "undefined" && AgregarCerradura.iniciar) AgregarCerradura.iniciar();
+
 };

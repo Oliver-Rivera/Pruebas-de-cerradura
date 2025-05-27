@@ -31,30 +31,31 @@
     </div>
   </div>
 
-  <!-- Botón flotante: Usuarios -->
-  <button id="botonUsuarios" class="boton-flotante">🔑 Profesores</button>
+<!-- Botón flotante: Usuarios -->
+<button id="botonUsuarios" class="boton-flotante">🔑 Profesores</button>
 
-  <!-- Modal Usuarios -->
-  <div id="modalUsuarios" class="modal">
-    <div class="modal-content">
-      <span id="cerrarUsuarios" class="close">&times;</span>
-      <h3>Usuarios autorizados</h3>
-      <ul id="listaUsuarios"></ul>
-      <hr>
-      <button id="btnMostrarFormulario">➕ Nuevo usuario</button>
-      <div id="formularioNuevoUsuario" style="display: none; margin-top: 10px;">
-        <input type="text" id="nuevoNombre" placeholder="Nombre del profesor">
-        <input type="text" id="nuevoID" placeholder="Número de control">
-        <input type="text" id="nuevoApellido" placeholder="Apellido del profesor">
-        <input type="text" id="nuevoCorreo" placeholder="Email">
-        <input type="password" id="nuevoContraseña" placeholder="Contraseña">
-        <input type="password" id="confirmarContraseña" placeholder="Confirmar contraseña">
-        <input type="text" id="nuevoRol" placeholder="Tipo de cuenta">
-        <br>
-        <button id="btnAgregarUsuario">✅ Registrar usuario</button>
-      </div>
+<!-- Modal Usuarios -->
+<div id="modalUsuarios" class="modal">
+  <div class="modal-content">
+    <span id="cerrarUsuarios" class="close">&times;</span>
+    <h3>Usuarios autorizados</h3>
+    <ul id="listaUsuarios"></ul>
+    <hr>
+    <button id="btnMostrarFormularioUsuario">➕ Nuevo usuario</button>
+    <div id="formularioNuevoUsuario" style="display: none; margin-top: 10px;">
+      <input type="text" id="nuevoNombre" placeholder="Nombre del profesor">
+      <input type="text" id="nuevoID" placeholder="Número de control">
+      <input type="text" id="nuevoApellido" placeholder="Apellido del profesor">
+      <input type="text" id="nuevoCorreo" placeholder="Email">
+      <input type="password" id="nuevaContraseña" placeholder="Contraseña">
+      <input type="password" id="confirmarContraseña" placeholder="Confirmar contraseña">
+      <input type="text" id="nuevoRol" placeholder="Tipo de cuenta">
+      <br>
+      <button id="btnAgregarUsuario">✅ Registrar usuario</button>
     </div>
   </div>
+</div>
+
 
   <!-- Botón flotante: Agregar cerradura -->
   <button id="botonAgregarCerradura" class="boton-flotante" style="bottom: 90px;">➕ Cerradura</button>
