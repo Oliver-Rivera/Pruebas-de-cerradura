@@ -8,12 +8,12 @@
   <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script defer src="script.js"></script>
-  <script defer src="js/autenticacion.js"></script>
   <script defer src="js/usuarios.js"></script>
   <script defer src="js/horarios.js"></script>
   <script defer src="js/agregarCerraduras.js"></script>
   <script defer src="js/cerraduras.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script defer src="js/login.js"></script> <!-- Nuevo script para login -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
@@ -21,7 +21,22 @@
     <div id="cerradurasContainer" class="cerraduras-wrapper"></div>
   </div>
 
-  
+  <!-- 🔓 Botón para iniciar sesión -->
+  <button onclick="Login.abrir()" id="botonLogin"  class="boton-flotante" style="bottom: 170px;">🔐 Iniciar Sesión</button>
+
+  <!-- 🧩 Modal Login -->
+  <div id="modalLogin" class="modal">
+    <div class="modal-contenido">
+      <span id="cerrarLogin" class="cerrar">&times;</span>
+      <h2>Iniciar Sesión</h2>
+      <form id="formLogin">
+        <input type="email" id="correoLogin" placeholder="Correo" required>
+        <input type="password" id="contraseñaLogin" placeholder="Contraseña" required>
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal Historial -->
   <div id="modalHistorial" class="modal">
     <div class="modal-content">
@@ -31,31 +46,30 @@
     </div>
   </div>
 
-<!-- Botón flotante: Usuarios -->
-<button id="botonUsuarios" class="boton-flotante">🔑 Profesores</button>
+  <!-- Botón flotante: Usuarios -->
+  <button id="botonUsuarios" class="boton-flotante">🔑 Profesores</button>
 
-<!-- Modal Usuarios -->
-<div id="modalUsuarios" class="modal">
-  <div class="modal-content">
-    <span id="cerrarUsuarios" class="close">&times;</span>
-    <h3>Usuarios autorizados</h3>
-    <ul id="listaUsuarios"></ul>
-    <hr>
-    <button id="btnMostrarFormularioUsuario">➕ Nuevo usuario</button>
-    <div id="formularioNuevoUsuario" style="display: none; margin-top: 10px;">
-      <input type="text" id="nuevoNombre" placeholder="Nombre del profesor">
-      <input type="text" id="nuevoID" placeholder="Número de control">
-      <input type="text" id="nuevoApellido" placeholder="Apellido del profesor">
-      <input type="text" id="nuevoCorreo" placeholder="Email">
-      <input type="password" id="nuevaContraseña" placeholder="Contraseña">
-      <input type="password" id="confirmarContraseña" placeholder="Confirmar contraseña">
-      <input type="text" id="nuevoRol" placeholder="Tipo de cuenta">
-      <br>
-      <button id="btnAgregarUsuario">✅ Registrar usuario</button>
+  <!-- Modal Usuarios -->
+  <div id="modalUsuarios" class="modal">
+    <div class="modal-content">
+      <span id="cerrarUsuarios" class="close">&times;</span>
+      <h3>Usuarios autorizados</h3>
+      <ul id="listaUsuarios"></ul>
+      <hr>
+      <button id="btnMostrarFormularioUsuario">➕ Nuevo usuario</button>
+      <div id="formularioNuevoUsuario" style="display: none; margin-top: 10px;">
+        <input type="text" id="nuevoNombre" placeholder="Nombre del profesor">
+        <input type="text" id="nuevoID" placeholder="Número de control">
+        <input type="text" id="nuevoApellido" placeholder="Apellido del profesor">
+        <input type="text" id="nuevoCorreo" placeholder="Email">
+        <input type="password" id="nuevaContraseña" placeholder="Contraseña">
+        <input type="password" id="confirmarContraseña" placeholder="Confirmar contraseña">
+        <input type="text" id="nuevoRol" placeholder="Tipo de cuenta">
+        <br>
+        <button id="btnAgregarUsuario">✅ Registrar usuario</button>
+      </div>
     </div>
   </div>
-</div>
-
 
   <!-- Botón flotante: Agregar cerradura -->
   <button id="botonAgregarCerradura" class="boton-flotante" style="bottom: 90px;">➕ Cerradura</button>
@@ -67,54 +81,51 @@
       <h3>Agregar nueva cerradura</h3>
       <input type="text" id="macCerradura" placeholder="Dirección MAC (ej: 2C:F4:32:7B:D9:8C)">
       <input type="text" id="nombreCerradura" placeholder="Nombre (ej: Puerta principal)">
-            <input type="text" id="ubicacionCerradura" placeholder="Ubicacion">
+      <input type="text" id="ubicacionCerradura" placeholder="Ubicacion">
       <br><br>
       <button id="agregarCerraduraBtn">✅ Agregar</button>
     </div>
   </div>
 
-
   <!-- Botón para abrir modal de Horarios -->
-<button id="botonHorarios">🗓️ Horarios</button>
-<!-- Modal Horarios -->
-<div id="modalHorarios" class="modal">
-  <div class="modal-content" style="text-align: center;">
-    <span id="cerrarModalHorarios" class="cerrar">&times;</span>
-    <h2>Agregar Horario</h2>
-    <form id="formHorario">
+  <button id="botonHorarios">🗓️ Horarios</button>
+
+  <!-- Modal Horarios -->
+  <div id="modalHorarios" class="modal">
+    <div class="modal-content" style="text-align: center;">
+      <span id="cerrarModalHorarios" class="cerrar">&times;</span>
+      <h2>Agregar Horario</h2>
+      <form id="formHorario">
         <div class="grupo-formulario">
-        <label>Días:</label>
+          <label>Días:</label>
           <div id="diasSemanaCheckboxes" class="checkbox-grid">
-              <label><input type="checkbox" name="dias" value="Lunes"> Lunes</label>
-              <label><input type="checkbox" name="dias" value="Martes"> Martes</label>
-              <label><input type="checkbox" name="dias" value="Miércoles"> Miércoles</label>
-              <label><input type="checkbox" name="dias" value="Jueves"> Jueves</label>
-              <label><input type="checkbox" name="dias" value="Viernes"> Viernes</label>
-        <!-- <label><input type="checkbox" name="dias" value="Sábado"> Sábado</label> -->
+            <label><input type="checkbox" name="dias" value="Lunes"> Lunes</label>
+            <label><input type="checkbox" name="dias" value="Martes"> Martes</label>
+            <label><input type="checkbox" name="dias" value="Miércoles"> Miércoles</label>
+            <label><input type="checkbox" name="dias" value="Jueves"> Jueves</label>
+            <label><input type="checkbox" name="dias" value="Viernes"> Viernes</label>
           </div>
         </div>
 
-      <div class="grupo-formulario fila-horas">
+        <div class="grupo-formulario fila-horas">
           <div>
-              <label for="inputHoraInicio">Hora inicio:</label>
-              <input type="time" id="inputHoraInicio">
+            <label for="inputHoraInicio">Hora inicio:</label>
+            <input type="time" id="inputHoraInicio">
           </div>
           <div>
-              <label for="inputHoraFin">Hora fin:</label>
-              <input type="time" id="inputHoraFin">
+            <label for="inputHoraFin">Hora fin:</label>
+            <input type="time" id="inputHoraFin">
           </div>
-      </div>
+        </div>
 
-      <label>Aula:</label>
-      <select id="selectAula"></select>
-      <label>Profesor:</label>
-      <select id="selectProfesor"></select>
-      <button type="submit">Guardar Horario</button>
-    </form>
-    <ul id="listaHorarios"></ul>
+        <label>Aula:</label>
+        <select id="selectAula"></select>
+        <label>Profesor:</label>
+        <select id="selectProfesor"></select>
+        <button type="submit">Guardar Horario</button>
+      </form>
+      <ul id="listaHorarios"></ul>
+    </div>
   </div>
-</div>
-
-
 </body>
 </html>

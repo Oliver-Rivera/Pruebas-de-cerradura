@@ -112,15 +112,28 @@ const Usuarios = (() => {
         const btnEliminar = document.createElement("button");
         btnEliminar.textContent = "🗑️ Eliminar";
         btnEliminar.onclick = () => {
-          if (confirm("¿Eliminar este usuario?")) {
-            db.ref(`Profesores/${uid}`).remove()
-              .then(() => cargarUsuarios())
-              .catch(err => {
-                console.error(err);
-                alert("Error al eliminar usuario.");
-              });
-          }
-        };
+  if (confirm("¿Eliminar este usuario?")) {
+    // 1. Eliminar datos en base de datos
+    db.ref(`Profesores/${uid}`).remove()
+      .then(() => {
+        // 2. Marcar para eliminación en Authentication (revisado por backend)
+        return db.ref(`EliminarUsuarios/${uid}`).set({
+          correo: d.correo,
+          nombre: d.nombre,
+          fecha: new Date().toISOString()
+        });
+      })
+      .then(() => {
+        alert("Usuario eliminado de la base de datos. Falta eliminar de Authentication.");
+        cargarUsuarios();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error al eliminar usuario.");
+      });
+  }
+};
+
 
         // Añadir todo al <li>
         li.append(

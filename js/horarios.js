@@ -20,10 +20,13 @@ const Horarios = (() => {
     modal.classList.add("mostrar");
     cargarSelects();
     mostrarHorarios();
+    form.onsubmit = agregarHorario; // Asegurar comportamiento base
   }
 
   function cerrarModal() {
     modal.classList.remove("mostrar");
+    form.reset();
+    document.querySelectorAll('input[name="dias"]').forEach(cb => cb.checked = false);
   }
 
   // Cargar opciones
@@ -78,6 +81,32 @@ const Horarios = (() => {
     });
   }
 
+  function actualizarHorario(id) {
+    const dias = checkboxes();
+    const hi = inputHoraInicio.value;
+    const hf = inputHoraFin.value;
+    const aula = selectAula.value;
+    const prof = selectProfesor.value;
+
+    if (!dias.length || !hi || !hf || !aula || !prof) {
+      return alert("Completa todos los campos.");
+    }
+
+    db.ref(`Horarios/${id}`).set({
+      dia_semana: dias.join(","),
+      hora_inicio: hi,
+      hora_fin: hf,
+      id_aula: aula,
+      id_profesor: prof
+    }).then(() => {
+      alert("Horario editado.");
+      form.reset();
+      document.querySelectorAll('input[name="dias"]').forEach(cb => cb.checked = false);
+      mostrarHorarios();
+      form.onsubmit = agregarHorario;
+    });
+  }
+
   // Mostrar todos los horarios
   function mostrarHorarios() {
     lista.innerHTML = "";
@@ -108,7 +137,6 @@ const Horarios = (() => {
     });
   }
 
-  // Eliminar
   function eliminarHorario(id) {
     if (confirm("¿Seguro que deseas eliminar este horario?")) {
       db.ref(`Horarios/${id}`).remove().then(() => {
@@ -118,15 +146,12 @@ const Horarios = (() => {
     }
   }
 
-  // Editar
   function editarHorario(id) {
     db.ref(`Horarios/${id}`).once("value").then(snap => {
       const h = snap.val();
       if (!h) return;
 
-      // Rellenar formulario
-      const checks = document.querySelectorAll('input[name="dias"]');
-      checks.forEach(chk => {
+      document.querySelectorAll('input[name="dias"]').forEach(chk => {
         chk.checked = h.dia_semana.split(",").includes(chk.value);
       });
       inputHoraInicio.value = h.hora_inicio;
@@ -136,37 +161,13 @@ const Horarios = (() => {
 
       modal.classList.add("mostrar");
 
-      // Modificar comportamiento del submit para actualizar
       form.onsubmit = e => {
         e.preventDefault();
-        const dias = checkboxes();
-        const hi = inputHoraInicio.value;
-        const hf = inputHoraFin.value;
-        const aula = selectAula.value;
-        const prof = selectProfesor.value;
-
-        if (!dias.length || !hi || !hf || !aula || !prof) {
-          return alert("Completa todos los campos.");
-        }
-
-        db.ref(`Horarios/${id}`).set({
-          dia_semana: dias.join(","),
-          hora_inicio: hi,
-          hora_fin: hf,
-          id_aula: aula,
-          id_profesor: prof
-        }).then(() => {
-          alert("Horario editado.");
-          form.reset();
-          checks.forEach(chk => chk.checked = false);
-          mostrarHorarios();
-          form.onsubmit = agregarHorario; // Restaurar acción original
-        });
+        actualizarHorario(id);
       };
     });
   }
 
-  // Inicializa eventos
   function iniciar() {
     botonAbrir.onclick = abrirModal;
     botonCerrar.onclick = cerrarModal;
@@ -175,11 +176,8 @@ const Horarios = (() => {
       if (e.target === modal) cerrarModal();
     });
   }
-  
 
   return {
     iniciar
   };
-
-
 })();

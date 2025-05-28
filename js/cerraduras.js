@@ -21,22 +21,44 @@ const Cerraduras = (() => {
     });
   }
 
-  function cambiarEstado(id, estadoActual) {
-    const nuevo = estadoActual === "ABIERTO" ? "CERRADO" : "ABIERTO";
-    db.ref(`aulas/${id}/estado`).set(nuevo);
+function cambiarEstado(id, estadoActual) {
+  const nuevo = estadoActual === "ABIERTO" ? "CERRADO" : "ABIERTO";
+  db.ref(`aulas/${id}/estado`).set(nuevo);
 
-    const now = new Date();
-    const fecha = now.toLocaleDateString("es-MX");
-    const hora = now.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
+  const now = new Date();
+  const fecha = now.toLocaleDateString("es-MX");
+  const hora = now.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
+
+  const usuario = firebase.auth().currentUser;
+  if (!usuario) {
+    alert("Debes iniciar sesión para registrar la acción.");
+    return;
+  }
+
+  const uid = usuario.uid;
+  db.ref(`Profesores/${uid}`).once("value").then(snapshot => {
+    const datos = snapshot.val();
+    const nombreCompleto = datos ? `${datos.nombre} ${datos.apellido}` : usuario.email;
 
     db.ref(`accesos/${id}`).push({
       fecha,
       hora,
       accion: nuevo,
       metodo: "Apertura Manual",
-      usuario: usuarioActual?.email || "Admin"
+      usuario: nombreCompleto
     });
-  }
+  }).catch(error => {
+    console.error("Error obteniendo nombre del profesor:", error);
+    db.ref(`accesos/${id}`).push({
+      fecha,
+      hora,
+      accion: nuevo,
+      metodo: "Apertura Manual",
+      usuario: usuario.email // fallback
+    });
+  });
+}
+
 
   function mostrarHistorial(id, nombreMostrado) {
     db.ref(`accesos/${id}`).limitToLast(10).once("value")
