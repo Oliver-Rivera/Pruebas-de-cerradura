@@ -21,14 +21,7 @@ const Cerraduras = (() => {
     });
   }
 
-function cambiarEstado(id, estadoActual) {
-  const nuevo = estadoActual === "ABIERTO" ? "CERRADO" : "ABIERTO";
-  db.ref(`aulas/${id}/estado`).set(nuevo);
-
-  const now = new Date();
-  const fecha = now.toLocaleDateString("es-MX");
-  const hora = now.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
-
+  function cambiarEstado(idAula, estadoActual) {
   const usuario = firebase.auth().currentUser;
   if (!usuario) {
     alert("Debes iniciar sesión para registrar la acción.");
@@ -36,26 +29,59 @@ function cambiarEstado(id, estadoActual) {
   }
 
   const uid = usuario.uid;
-  db.ref(`Profesores/${uid}`).once("value").then(snapshot => {
-    const datos = snapshot.val();
-    const nombreCompleto = datos ? `${datos.nombre} ${datos.apellido}` : usuario.email;
+  const now = new Date();
+  const fecha = now.toLocaleDateString("es-MX");
+  const horaActual = now.toTimeString().slice(0, 5); // "HH:MM"
+  const diaActual = now.toLocaleDateString("es-MX", { weekday: 'long' }).toLowerCase();
 
-    db.ref(`accesos/${id}`).push({
-      fecha,
-      hora,
-      accion: nuevo,
-      metodo: "Apertura Manual",
-      usuario: nombreCompleto
+  // Obtener datos del profesor
+  db.ref(`Profesores/${uid}`).once("value").then(snapshot => {
+    const profesor = snapshot.val();
+    if (!profesor) throw new Error("No se encontró información del profesor.");
+
+    // Buscar si tiene clase en este momento
+    db.ref("Horarios").once("value").then(snapshot => {
+      const horarios = snapshot.val();
+      let accesoPermitido = false;
+
+      for (let key in horarios) {
+        const h = horarios[key];
+        const dias = h.dia_semana.split(",").map(d => d.trim().toLowerCase());
+        if (
+          h.id_profesor === uid &&
+          h.id_aula === idAula &&
+          dias.includes(diaActual) &&
+          h.hora_inicio <= horaActual &&
+          horaActual <= h.hora_fin
+        ) {
+          accesoPermitido = true;
+          break;
+        }
+      }
+
+      if (!accesoPermitido) {
+        alert("No tienes clase programada en este aula en este momento.");
+        return;
+      }
+
+      // Si tiene permiso, cambiar el estado
+      const nuevo = estadoActual === "ABIERTO" ? "CERRADO" : "ABIERTO";
+      db.ref(`aulas/${idAula}/estado`).set(nuevo);
+
+      const nombreCompleto = `${profesor.nombre} ${profesor.apellido}`;
+      db.ref(`accesos/${idAula}`).push({
+        fecha,
+        hora: horaActual,
+        accion: nuevo,
+        metodo: "Apertura Manual",
+        usuario: nombreCompleto
+      });
+
+      alert(`Cerradura ${nuevo.toLowerCase()} correctamente.`);
     });
   }).catch(error => {
-    console.error("Error obteniendo nombre del profesor:", error);
-    db.ref(`accesos/${id}`).push({
-      fecha,
-      hora,
-      accion: nuevo,
-      metodo: "Apertura Manual",
-      usuario: usuario.email // fallback
-    });
+    console.error("Error en verificación de clase:", error);
+    alert("Error verificando el horario. Intenta más tarde.");
   });
 }
 
@@ -115,7 +141,7 @@ function cambiarEstado(id, estadoActual) {
         };
 
         const btnGuardarNombre = document.createElement("button");
-        btnGuardarNombre.textContent = "💾 Guardar";
+        btnGuardarNombre.textContent = "📂 Guardar";
         btnGuardarNombre.style.display = "none";
         btnGuardarNombre.onclick = () => {
           const nuevoNombre = inputNombre.value.trim();
