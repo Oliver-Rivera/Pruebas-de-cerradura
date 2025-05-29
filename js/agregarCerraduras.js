@@ -6,14 +6,13 @@ const AgregarCerradura = (() => {
   const botonGuardar = document.getElementById("agregarCerraduraBtn");
   const inputMAC = document.getElementById("macCerradura");
   const inputNombre = document.getElementById("nombreCerradura");
-  const inputUbicacion = document.getElementById("ubicacionCerradura");
+  const selectUbicacion  = document.getElementById("ubicacionCerradura");
 
   // Limpia campos del formulario
   function limpiarFormulario() {
     inputMAC.value = "";
     inputNombre.value = "";
-    inputUbicacion.value = "";
-  }
+    selectUbicacion.selectedIndex = 0;  }
 
   // Abre o cierra el modal
   function toggleModal() {
@@ -30,27 +29,28 @@ const AgregarCerradura = (() => {
 
   // Agrega cerradura a la DB
   function agregarCerradura() {
-    const mac = inputMAC.value.trim();
-    const nombre = inputNombre.value.trim();
-    const ubicacion = inputUbicacion.value.trim();
+  const mac = inputMAC.value.trim();
+  const nombre = inputNombre.value.trim();
+  const ubicacion = selectUbicacion.value;
 
-    if (!mac || !nombre) {
-      return alert("Completa ambos campos.");
-    }
-
-    db.ref(`aulas/${mac}`).set({
-      estado: "CERRADO",
-      nombre,
-      ubicacion
-    })
-    .then(() => {
-      alert("Cerradura agregada.");
-      cerrarModal();
-    })
-    .catch(err => {
-      alert("Error al agregar cerradura: " + err.message);
-    });
+  if (!mac || !nombre || !ubicacion) {
+    return alert("Completa todos los campos correctamente.");
   }
+
+  db.ref(`aulas/${mac}`).set({
+    estado: "CERRADO",
+    nombre,
+    ubicacion
+  })
+  .then(() => {
+    alert("Cerradura agregada.");
+    cerrarModal();
+  })
+  .catch(err => {
+    alert("Error al agregar cerradura: " + err.message);
+  });
+}
+
 
   // Inicializa eventos
   function iniciar() {

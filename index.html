@@ -81,7 +81,16 @@
       <h3>Agregar nueva cerradura</h3>
       <input type="text" id="macCerradura" placeholder="Dirección MAC (ej: 2C:F4:32:7B:D9:8C)">
       <input type="text" id="nombreCerradura" placeholder="Nombre (ej: Puerta principal)">
-      <input type="text" id="ubicacionCerradura" placeholder="Ubicacion">
+      <label for="ubicacionCerradura">Ubicación:</label>
+      <select id="ubicacionCerradura" required>
+          <option value="" disabled selected>Selecciona una ubicación</option>
+          <option value="Laboratorio 1">Planta Baja</option>
+          <option value="Laboratorio 2">Primer Piso</option>
+          <option value="Aula de Electrónica">Segundo Piso</option>
+          <option value="Sala de Profesores">Laboratorio</option>
+          <option value="Bodega de Equipos">Aula Magna</option>
+      </select>
+
       <br><br>
       <button id="agregarCerraduraBtn">✅ Agregar</button>
     </div>

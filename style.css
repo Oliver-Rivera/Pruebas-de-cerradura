@@ -71,6 +71,15 @@ body {
   content: "✖ ";
 }
 
+select#ubicacionCerradura {
+  width: 90%;
+  padding: 5px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
 /* ─────────── BOTONES ─────────── */
 button {
   background-color: #ffffff;
@@ -336,3 +345,32 @@ select{
   margin-bottom: 4px;
   color: #333;
 }
+
+/* Botones específicos */
+.btn-editar,
+.btn-guardar,
+.btn-cancelar {
+  margin: 4px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-editar {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.btn-guardar {
+  background-color: #5cb85c;
+  color: white;
+}
+
+.btn-cancelar {
+  background-color: #d9534f;
+  color: white;
+}
+
+
+/*    */

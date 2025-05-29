@@ -5,6 +5,14 @@ const Cerraduras = (() => {
   const tituloHist = document.getElementById("tituloHistorial");
   const contenidoHist = document.getElementById("contenidoHistorial");
 
+  const ubicacionesDisponibles = [
+    "Laboratorio 1",
+    "Laboratorio 2",
+    "Aula de Electrónica",
+    "Sala de Profesores",
+    "Bodega de Equipos"
+  ];
+
   cerrarHist.onclick = () => modalHist.classList.remove("mostrar");
 
   window.addEventListener("click", (e) => {
@@ -22,69 +30,65 @@ const Cerraduras = (() => {
   }
 
   function cambiarEstado(idAula, estadoActual) {
-  const usuario = firebase.auth().currentUser;
-  if (!usuario) {
-    alert("Debes iniciar sesión para registrar la acción.");
-    return;
-  }
+    const usuario = firebase.auth().currentUser;
+    if (!usuario) {
+      alert("Debes iniciar sesión para registrar la acción.");
+      return;
+    }
 
-  const uid = usuario.uid;
-  const now = new Date();
-  const fecha = now.toLocaleDateString("es-MX");
-  const horaActual = now.toTimeString().slice(0, 5); // "HH:MM"
-  const diaActual = now.toLocaleDateString("es-MX", { weekday: 'long' }).toLowerCase();
+    const uid = usuario.uid;
+    const now = new Date();
+    const fecha = now.toLocaleDateString("es-MX");
+    const horaActual = now.toTimeString().slice(0, 5);
+    const diaActual = now.toLocaleDateString("es-MX", { weekday: 'long' }).toLowerCase();
 
-  // Obtener datos del profesor
-  db.ref(`Profesores/${uid}`).once("value").then(snapshot => {
-    const profesor = snapshot.val();
-    if (!profesor) throw new Error("No se encontró información del profesor.");
+    db.ref(`Profesores/${uid}`).once("value").then(snapshot => {
+      const profesor = snapshot.val();
+      if (!profesor) throw new Error("No se encontró información del profesor.");
 
-    // Buscar si tiene clase en este momento
-    db.ref("Horarios").once("value").then(snapshot => {
-      const horarios = snapshot.val();
-      let accesoPermitido = false;
+      db.ref("Horarios").once("value").then(snapshot => {
+        const horarios = snapshot.val();
+        let accesoPermitido = false;
 
-      for (let key in horarios) {
-        const h = horarios[key];
-        const dias = h.dia_semana.split(",").map(d => d.trim().toLowerCase());
-        if (
-          h.id_profesor === uid &&
-          h.id_aula === idAula &&
-          dias.includes(diaActual) &&
-          h.hora_inicio <= horaActual &&
-          horaActual <= h.hora_fin
-        ) {
-          accesoPermitido = true;
-          break;
+        for (let key in horarios) {
+          const h = horarios[key];
+          const dias = h.dia_semana.split(",").map(d => d.trim().toLowerCase());
+          if (
+            h.id_profesor === uid &&
+            h.id_aula === idAula &&
+            dias.includes(diaActual) &&
+            h.hora_inicio <= horaActual &&
+            horaActual <= h.hora_fin
+          ) {
+            accesoPermitido = true;
+            break;
+          }
         }
-      }
 
-      if (!accesoPermitido) {
-        alert("No tienes clase programada en este aula en este momento.");
-        return;
-      }
+        if (!accesoPermitido) {
+          alert("No tienes clase programada en este aula en este momento.");
+          return;
+        }
 
-      // Si tiene permiso, cambiar el estado
-      const nuevo = estadoActual === "ABIERTO" ? "CERRADO" : "ABIERTO";
-      db.ref(`aulas/${idAula}/estado`).set(nuevo);
+        const nuevo = estadoActual === "ABIERTO" ? "CERRADO" : "ABIERTO";
+        db.ref(`aulas/${idAula}/estado`).set(nuevo);
 
-      const nombreCompleto = `${profesor.nombre} ${profesor.apellido}`;
-      db.ref(`accesos/${idAula}`).push({
-        fecha,
-        hora: horaActual,
-        accion: nuevo,
-        metodo: "Apertura Manual",
-        usuario: nombreCompleto
+        const nombreCompleto = `${profesor.nombre} ${profesor.apellido}`;
+        db.ref(`accesos/${idAula}`).push({
+          fecha,
+          hora: horaActual,
+          accion: nuevo,
+          metodo: "Apertura Manual",
+          usuario: nombreCompleto
+        });
+
+        alert(`Cerradura ${nuevo.toLowerCase()} correctamente.`);
       });
-
-      alert(`Cerradura ${nuevo.toLowerCase()} correctamente.`);
+    }).catch(error => {
+      console.error("Error en verificación de clase:", error);
+      alert("Error verificando el horario. Intenta más tarde.");
     });
-  }).catch(error => {
-    console.error("Error en verificación de clase:", error);
-    alert("Error verificando el horario. Intenta más tarde.");
-  });
-}
-
+  }
 
   function mostrarHistorial(id, nombreMostrado) {
     db.ref(`accesos/${id}`).limitToLast(10).once("value")
@@ -124,7 +128,7 @@ const Cerraduras = (() => {
         div.className = "cerradura";
 
         const nombre = document.createElement("h2");
-        nombre.textContent = info.nombre;
+        nombre.innerHTML = `${info.nombre} <span style="font-size: 0.8em; color: #555;">(${info.ubicacion || "Sin ubicación"})</span>`;
 
         const inputNombre = document.createElement("input");
         inputNombre.type = "text";
@@ -132,25 +136,78 @@ const Cerraduras = (() => {
         inputNombre.style.display = "none";
         inputNombre.style.marginRight = "5px";
 
-        const btnEditarNombre = document.createElement("button");
-        btnEditarNombre.textContent = "✏️ Renombrar";
-        btnEditarNombre.onclick = () => {
+        const selectUbicacion = document.createElement("select");
+          selectUbicacion.style.display = "none";
+          selectUbicacion.style.marginRight = "5px";
+
+// Simular placeholder
+        const placeholderOption = document.createElement("option");
+          placeholderOption.textContent = "Selecciona una ubicación";
+          placeholderOption.disabled = true;
+          placeholderOption.selected = true;
+          selectUbicacion.appendChild(placeholderOption);
+
+// Agregar opciones reales
+    ubicacionesDisponibles.forEach(opcion => {
+    const opt = document.createElement("option");
+    opt.value = opcion;
+    opt.textContent = opcion;
+      if (opcion === info.ubicacion) {
+        opt.selected = true;
+        placeholderOption.selected = false; // desactivar el placeholder si ya hay valor
+      }
+    selectUbicacion.appendChild(opt);
+    });
+
+
+        const btnEditar = document.createElement("button");
+        btnEditar.textContent = "✏️ Editar";
+        btnEditar.className = "btn-editar";
+
+        const btnGuardar = document.createElement("button");
+        btnGuardar.textContent = "📂 Guardar";
+        btnGuardar.className = "btn-guardar oculto";
+        btnGuardar.style.display = "none";
+
+        const btnCancelar = document.createElement("button");
+        btnCancelar.textContent = "❌ Cancelar";
+        btnCancelar.className = "btn-cancelar oculto";
+        btnCancelar.style.display = "none";
+
+        btnEditar.onclick = () => {
           inputNombre.style.display = "inline";
-          btnGuardarNombre.style.display = "inline";
-          btnEditarNombre.style.display = "none";
+          selectUbicacion.style.display = "inline";
+          btnGuardar.style.display = "inline";
+          btnCancelar.style.display = "inline";
+          btnEditar.style.display = "none";
         };
 
-        const btnGuardarNombre = document.createElement("button");
-        btnGuardarNombre.textContent = "📂 Guardar";
-        btnGuardarNombre.style.display = "none";
-        btnGuardarNombre.onclick = () => {
+        btnGuardar.onclick = () => {
           const nuevoNombre = inputNombre.value.trim();
-          if (nuevoNombre !== "") {
-            db.ref("aulas/" + id + "/nombre").set(nuevoNombre).then(() => {
-              alert("Nombre actualizado.");
-              cargarCerraduras();
-            });
+          const nuevaUbicacion = selectUbicacion.value.trim();
+
+          if (!nuevoNombre || !nuevaUbicacion) {
+            alert("Nombre y ubicación no pueden estar vacíos.");
+            return;
           }
+
+          db.ref("aulas/" + id).update({
+            nombre: nuevoNombre,
+            ubicacion: nuevaUbicacion
+          }).then(() => {
+            alert("Datos actualizados.");
+            cargarCerraduras();
+          });
+        };
+
+        btnCancelar.onclick = () => {
+          inputNombre.style.display = "none";
+          selectUbicacion.style.display = "none";
+          btnGuardar.style.display = "none";
+          btnCancelar.style.display = "none";
+          btnEditar.style.display = "inline";
+          inputNombre.value = info.nombre;
+          selectUbicacion.value = info.ubicacion || "";
         };
 
         const span = document.createElement("span");
@@ -168,13 +225,16 @@ const Cerraduras = (() => {
         div.append(
           nombre,
           inputNombre,
-          btnEditarNombre,
-          btnGuardarNombre,
+          selectUbicacion,
+          btnEditar,
+          btnGuardar,
+          btnCancelar,
           btnToggle,
           span,
           document.createElement("br"),
           btnHist
         );
+
         contenedor.appendChild(div);
       });
 
