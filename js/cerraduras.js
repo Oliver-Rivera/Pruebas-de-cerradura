@@ -174,31 +174,48 @@ const Cerraduras = (() => {
         btnCancelar.className = "btn-cancelar oculto";
         btnCancelar.style.display = "none";
 
-        btnEditar.onclick = () => {
-          inputNombre.style.display = "inline";
-          selectUbicacion.style.display = "inline";
-          btnGuardar.style.display = "inline";
-          btnCancelar.style.display = "inline";
+        // Lógica de edición solo si es admin
+        if (window.esAdmin) {
+          btnEditar.onclick = () => {
+            inputNombre.style.display = "inline";
+            selectUbicacion.style.display = "inline";
+            btnGuardar.style.display = "inline";
+            btnCancelar.style.display = "inline";
+            btnEditar.style.display = "none";
+          };
+
+          btnGuardar.onclick = () => {
+            const nuevoNombre = inputNombre.value.trim();
+            const nuevaUbicacion = selectUbicacion.value.trim();
+
+            if (!nuevoNombre || !nuevaUbicacion) {
+              alert("Nombre y ubicación no pueden estar vacíos.");
+              return;
+            }
+
+            db.ref("aulas/" + id).update({
+              nombre: nuevoNombre,
+              ubicacion: nuevaUbicacion
+            }).then(() => {
+              alert("Datos actualizados.");
+              cargarCerraduras();
+            });
+          };
+
+          btnCancelar.onclick = () => {
+            inputNombre.style.display = "none";
+            selectUbicacion.style.display = "none";
+            btnGuardar.style.display = "none";
+            btnCancelar.style.display = "none";
+            btnEditar.style.display = "inline";
+            inputNombre.value = info.nombre;
+            selectUbicacion.value = info.ubicacion || "";
+          };
+        } else {
+          // Si no es admin, ocultar los botones de edición
           btnEditar.style.display = "none";
-        };
+        }
 
-        btnGuardar.onclick = () => {
-          const nuevoNombre = inputNombre.value.trim();
-          const nuevaUbicacion = selectUbicacion.value.trim();
-
-          if (!nuevoNombre || !nuevaUbicacion) {
-            alert("Nombre y ubicación no pueden estar vacíos.");
-            return;
-          }
-
-          db.ref("aulas/" + id).update({
-            nombre: nuevoNombre,
-            ubicacion: nuevaUbicacion
-          }).then(() => {
-            alert("Datos actualizados.");
-            cargarCerraduras();
-          });
-        };
 
         btnCancelar.onclick = () => {
           inputNombre.style.display = "none";

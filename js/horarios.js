@@ -14,13 +14,14 @@ const Horarios = (() => {
   const checkboxes = () =>
     [...document.querySelectorAll('input[name="dias"]:checked')].map(cb => cb.value);
 
-  // Abrir modal y cargar datos
   function abrirModal() {
+    if (!window.esAdmin) return alert("Solo un administrador puede gestionar los horarios.");
+
     closeAllModals();
     modal.classList.add("mostrar");
     cargarSelects();
     mostrarHorarios();
-    form.onsubmit = agregarHorario; // Asegurar comportamiento base
+    form.onsubmit = agregarHorario;
   }
 
   function cerrarModal() {
@@ -29,7 +30,6 @@ const Horarios = (() => {
     document.querySelectorAll('input[name="dias"]').forEach(cb => cb.checked = false);
   }
 
-  // Cargar opciones
   function cargarSelects() {
     selectAula.innerHTML = "";
     selectProfesor.innerHTML = "";
@@ -53,9 +53,10 @@ const Horarios = (() => {
     });
   }
 
-  // Guardar nuevo horario
   function agregarHorario(e) {
     e.preventDefault();
+    if (!window.esAdmin) return alert("Solo un administrador puede agregar horarios.");
+
     const dias = checkboxes();
     const hi = inputHoraInicio.value;
     const hf = inputHoraFin.value;
@@ -82,6 +83,8 @@ const Horarios = (() => {
   }
 
   function actualizarHorario(id) {
+    if (!window.esAdmin) return alert("Solo un administrador puede editar horarios.");
+
     const dias = checkboxes();
     const hi = inputHoraInicio.value;
     const hf = inputHoraFin.value;
@@ -107,7 +110,6 @@ const Horarios = (() => {
     });
   }
 
-  // Mostrar todos los horarios
   function mostrarHorarios() {
     lista.innerHTML = "";
     db.ref("Horarios").once("value").then(snap => {
@@ -129,21 +131,26 @@ const Horarios = (() => {
       });
 
       document.querySelectorAll(".btn-eliminar").forEach(btn => {
-        btn.onclick = () => eliminarHorario(btn.dataset.id);
+        btn.onclick = () => {
+          if (!window.esAdmin) return alert("Solo un administrador puede eliminar horarios.");
+          eliminarHorario(btn.dataset.id);
+        };
       });
+
       document.querySelectorAll(".btn-editar").forEach(btn => {
-        btn.onclick = () => editarHorario(btn.dataset.id);
+        btn.onclick = () => {
+          if (!window.esAdmin) return alert("Solo un administrador puede editar horarios.");
+          editarHorario(btn.dataset.id);
+        };
       });
     });
   }
 
   function eliminarHorario(id) {
-    if (confirm("¿Seguro que deseas eliminar este horario?")) {
-      db.ref(`Horarios/${id}`).remove().then(() => {
-        alert("Horario eliminado.");
-        mostrarHorarios();
-      });
-    }
+    db.ref(`Horarios/${id}`).remove().then(() => {
+      alert("Horario eliminado.");
+      mostrarHorarios();
+    });
   }
 
   function editarHorario(id) {
@@ -172,6 +179,7 @@ const Horarios = (() => {
     botonAbrir.onclick = abrirModal;
     botonCerrar.onclick = cerrarModal;
     form.onsubmit = agregarHorario;
+
     window.addEventListener("click", e => {
       if (e.target === modal) cerrarModal();
     });

@@ -80,20 +80,30 @@ const Login = (() => {
       .then(snapshot => {
         window.esAdmin = snapshot.val() === "admin";
         console.log("¿Es admin?", window.esAdmin);
-        renderizarBoton(); // Asegura que el botón se actualice después de conocer el rol
+        renderizarBoton();
+
+        // ✅ Iniciar módulo cerraduras después de conocer el rol
+        Cerraduras.iniciar();
       })
       .catch(err => {
         console.error("Error al verificar rol del usuario:", err);
         window.esAdmin = false;
         renderizarBoton();
+
+        // ✅ Igual iniciamos las cerraduras (sin privilegios)
+        Cerraduras.iniciar();
       });
 
   } else {
     window.usuarioActivo = null;
     window.esAdmin = false;
     renderizarBoton();
+
+    // ✅ También en caso de no haber usuario
+    Cerraduras.iniciar();
   }
 });
+
 
 
   return { abrir };
