@@ -4,11 +4,10 @@ const Login = (() => {
   const form = document.getElementById("formLogin");
   const inputCorreo = document.getElementById("correoLogin");
   const inputContraseña = document.getElementById("contraseñaLogin");
-
-  const botonLogin = document.getElementById("botonLogin"); // ID del botón de login/logout
+  const botonLogin = document.getElementById("botonLogin"); // Botón login/logout
 
   function abrir() {
-    closeAllModals?.(); // cierra otros modales si existe
+    closeAllModals?.(); // Por si tienes una función para cerrar otros modales
     modal.classList.add("mostrar");
   }
 
@@ -27,7 +26,6 @@ const Login = (() => {
 
     firebase.auth().signInWithEmailAndPassword(correo, contraseña)
       .then(cred => {
-        const user = cred.user;
         cerrarModal();
         alert("Sesión iniciada correctamente.");
         renderizarBoton();
@@ -49,13 +47,14 @@ const Login = (() => {
       .then(() => {
         alert("Sesión cerrada.");
         renderizarBoton();
+        ocultarBotonesAdmin(); // ocultar al cerrar sesión
       })
       .catch(error => {
         console.error("Error al cerrar sesión:", error);
       });
   }
 
-  // Botón dinámico login/logout
+  // Mostrar u ocultar botón login/logout
   function renderizarBoton() {
     const user = firebase.auth().currentUser;
 
@@ -70,41 +69,72 @@ const Login = (() => {
     }
   }
 
- firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    console.log("Usuario activo:", user.email);
-    window.usuarioActivo = user;
+  // Ocultar botones para usuarios que no son admin
+  function ocultarBotonesAdmin() {
+  const botonLogin = document.getElementById("botonLogin");
+  const botonCerradura = document.getElementById("botonAgregarCerradura");
+  const botonUsuarios = document.getElementById("botonUsuarios");
 
-    // Verificar si el usuario es administrador
-    db.ref(`Profesores/${user.uid}/rol`).once("value")
-      .then(snapshot => {
-        window.esAdmin = snapshot.val() === "admin";
-        console.log("¿Es admin?", window.esAdmin);
-        renderizarBoton();
+  if (!window.esAdmin) {
+    if (botonCerradura) botonCerradura.style.display = "none";
+    if (botonUsuarios) botonUsuarios.style.display = "none";
 
-        // ✅ Iniciar módulo cerraduras después de conocer el rol
-        Cerraduras.iniciar();
-      })
-      .catch(err => {
-        console.error("Error al verificar rol del usuario:", err);
-        window.esAdmin = false;
-        renderizarBoton();
-
-        // ✅ Igual iniciamos las cerraduras (sin privilegios)
-        Cerraduras.iniciar();
-      });
-
+    // Mover login al fondo
+    if (botonLogin) botonLogin.style.bottom = "20px";
   } else {
-    window.usuarioActivo = null;
-    window.esAdmin = false;
-    renderizarBoton();
+    if (botonCerradura) {
+      botonCerradura.style.display = "block";
+      botonCerradura.style.bottom = "90px";
+    }
 
-    // ✅ También en caso de no haber usuario
-    Cerraduras.iniciar();
+    if (botonUsuarios) {
+      botonUsuarios.style.display = "block";
+      botonUsuarios.style.bottom = "20px";
+    }
+
+    // Volver a colocar login más arriba
+    if (botonLogin) botonLogin.style.bottom = "170px";
   }
-});
+}
 
 
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      console.log("Usuario activo:", user.email);
+      window.usuarioActivo = user;
+
+      // Leer el rol del usuario desde la base de datos
+      db.ref(`Profesores/${user.uid}/rol`).once("value")
+        .then(snapshot => {
+          window.esAdmin = snapshot.val() === "admin";
+          console.log("¿Es admin?", window.esAdmin);
+
+          renderizarBoton();
+          ocultarBotonesAdmin();
+
+          Cerraduras.iniciar(); // Iniciar sistema de cerraduras
+        })
+        .catch(err => {
+          console.error("Error al verificar rol:", err);
+          window.esAdmin = false;
+
+          renderizarBoton();
+          ocultarBotonesAdmin();
+
+          Cerraduras.iniciar();
+        });
+
+    } else {
+      window.usuarioActivo = null;
+      window.esAdmin = false;
+
+      renderizarBoton();
+      ocultarBotonesAdmin();
+
+      Cerraduras.iniciar();
+    }
+  });
 
   return { abrir };
 })();

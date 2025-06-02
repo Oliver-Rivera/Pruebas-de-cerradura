@@ -137,28 +137,25 @@ const Cerraduras = (() => {
         inputNombre.style.marginRight = "5px";
 
         const selectUbicacion = document.createElement("select");
-          selectUbicacion.style.display = "none";
-          selectUbicacion.style.marginRight = "5px";
+        selectUbicacion.style.display = "none";
+        selectUbicacion.style.marginRight = "5px";
 
-// Simular placeholder
         const placeholderOption = document.createElement("option");
-          placeholderOption.textContent = "Selecciona una ubicación";
-          placeholderOption.disabled = true;
-          placeholderOption.selected = true;
-          selectUbicacion.appendChild(placeholderOption);
+        placeholderOption.textContent = "Selecciona una ubicación";
+        placeholderOption.disabled = true;
+        placeholderOption.selected = true;
+        selectUbicacion.appendChild(placeholderOption);
 
-// Agregar opciones reales
-    ubicacionesDisponibles.forEach(opcion => {
-    const opt = document.createElement("option");
-    opt.value = opcion;
-    opt.textContent = opcion;
-      if (opcion === info.ubicacion) {
-        opt.selected = true;
-        placeholderOption.selected = false; // desactivar el placeholder si ya hay valor
-      }
-    selectUbicacion.appendChild(opt);
-    });
-
+        ubicacionesDisponibles.forEach(opcion => {
+          const opt = document.createElement("option");
+          opt.value = opcion;
+          opt.textContent = opcion;
+          if (opcion === info.ubicacion) {
+            opt.selected = true;
+            placeholderOption.selected = false;
+          }
+          selectUbicacion.appendChild(opt);
+        });
 
         const btnEditar = document.createElement("button");
         btnEditar.textContent = "✏️ Editar";
@@ -174,7 +171,27 @@ const Cerraduras = (() => {
         btnCancelar.className = "btn-cancelar oculto";
         btnCancelar.style.display = "none";
 
-        // Lógica de edición solo si es admin
+        const btnEliminar = document.createElement("button");
+        btnEliminar.textContent = "🗑️ Eliminar";
+        btnEliminar.className = "btn-eliminar";
+        btnEliminar.style.backgroundColor = "#e74c3c";
+        btnEliminar.style.color = "#fff";
+        btnEliminar.style.marginLeft = "5px";
+
+        btnEliminar.onclick = () => {
+          if (confirm(`¿Estás seguro de eliminar la cerradura "${info.nombre}"?`)) {
+            db.ref("aulas/" + id).remove()
+              .then(() => {
+                alert("Cerradura eliminada.");
+                cargarCerraduras();
+              })
+              .catch(err => {
+                console.error("Error al eliminar:", err);
+                alert("Error al eliminar cerradura.");
+              });
+          }
+        };
+
         if (window.esAdmin) {
           btnEditar.onclick = () => {
             inputNombre.style.display = "inline";
@@ -212,20 +229,8 @@ const Cerraduras = (() => {
             selectUbicacion.value = info.ubicacion || "";
           };
         } else {
-          // Si no es admin, ocultar los botones de edición
           btnEditar.style.display = "none";
         }
-
-
-        btnCancelar.onclick = () => {
-          inputNombre.style.display = "none";
-          selectUbicacion.style.display = "none";
-          btnGuardar.style.display = "none";
-          btnCancelar.style.display = "none";
-          btnEditar.style.display = "inline";
-          inputNombre.value = info.nombre;
-          selectUbicacion.value = info.ubicacion || "";
-        };
 
         const span = document.createElement("span");
         span.className = `estado ${info.estado === "ABIERTO" ? "abierto" : "cerrado"}`;
@@ -248,9 +253,10 @@ const Cerraduras = (() => {
           btnCancelar,
           btnToggle,
           span,
-          document.createElement("br"),
           btnHist
         );
+
+        if (window.esAdmin) div.appendChild(btnEliminar);
 
         contenedor.appendChild(div);
       });
