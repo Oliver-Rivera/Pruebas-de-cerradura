@@ -70,16 +70,31 @@ const Login = (() => {
     }
   }
 
-  // Mantener activo el botón correcto al recargar
-  firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-      console.log("Usuario activo:", user.email);
-      window.usuarioActivo = user; // 🔥 Puedes usar esto en otras partes
-    } else {
-      window.usuarioActivo = null;
-    }
+ firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    console.log("Usuario activo:", user.email);
+    window.usuarioActivo = user;
+
+    // Verificar si el usuario es administrador
+    db.ref(`Profesores/${user.uid}/rol`).once("value")
+      .then(snapshot => {
+        window.esAdmin = snapshot.val() === "admin";
+        console.log("¿Es admin?", window.esAdmin);
+        renderizarBoton(); // Asegura que el botón se actualice después de conocer el rol
+      })
+      .catch(err => {
+        console.error("Error al verificar rol del usuario:", err);
+        window.esAdmin = false;
+        renderizarBoton();
+      });
+
+  } else {
+    window.usuarioActivo = null;
+    window.esAdmin = false;
     renderizarBoton();
-  });
+  }
+});
+
 
   return { abrir };
 })();

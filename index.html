@@ -64,9 +64,15 @@
         <input type="text" id="nuevoCorreo" placeholder="Email">
         <input type="password" id="nuevaContraseña" placeholder="Contraseña">
         <input type="password" id="confirmarContraseña" placeholder="Confirmar contraseña">
-        <input type="text" id="nuevoRol" placeholder="Tipo de cuenta">
+        <label for="nuevoRol">Tipo de cuenta:</label>
+            <select id="nuevoRol">
+              <option value="" disabled selected>Selecciona un rol</option>
+              <option value="admin">Administrador</option>
+              <option value="profesor">Profesor</option>
+            </select>
         <br>
         <button id="btnAgregarUsuario">✅ Registrar usuario</button>
+        <button id="btnCancelarCrearUsuario" type="button">❌ Cancelar</button>
       </div>
     </div>
   </div>

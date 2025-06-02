@@ -1,5 +1,4 @@
-const Usuarios = (() => {
-  // Elementos del DOM
+const Usuarios = (() => { 
   const modalUsuarios = document.getElementById("modalUsuarios");
   const cerrarUsuarios = document.getElementById("cerrarUsuarios");
   const listaUsuarios = document.getElementById("listaUsuarios");
@@ -7,7 +6,7 @@ const Usuarios = (() => {
   const botonUsuarios = document.getElementById("botonUsuarios");
   const btnMostrarFormulario = document.getElementById("btnMostrarFormularioUsuario");
   const formCrearUsuario = document.getElementById("formularioNuevoUsuario");
-  
+
   const btnAgregarUsuario = document.getElementById("btnAgregarUsuario");
   const inputNuevoNombre = document.getElementById("nuevoNombre");
   const inputNuevoID = document.getElementById("nuevoID");
@@ -17,7 +16,6 @@ const Usuarios = (() => {
   const inputConfirmarContraseña = document.getElementById("confirmarContraseña");
   const inputNuevoRol = document.getElementById("nuevoRol");
 
-  // Función para mostrar u ocultar inputs editables en cada usuario
   function toggleInputs(show, inputs) {
     const display = show ? "inline" : "none";
     inputs.forEach(input => input.style.display = display);
@@ -39,44 +37,65 @@ const Usuarios = (() => {
         const li = document.createElement("li");
         li.style.marginBottom = "15px";
 
-        // Mostrar nombre completo
         const lblNombre = document.createElement("strong");
         lblNombre.textContent = `${d.nombre} ${d.apellido || ""}`;
 
-        // Inputs editables
         const inputNombre = document.createElement("input");
         const inputApellido = document.createElement("input");
         const inputCorreo = document.createElement("input");
-        const inputRol = document.createElement("input");
+        const inputRol = document.createElement("select");
 
-        inputNombre.type = inputApellido.type = inputCorreo.type = inputRol.type = "text";
+        inputNombre.type = inputApellido.type = inputCorreo.type = "text";
         inputNombre.value = d.nombre || "";
         inputApellido.value = d.apellido || "";
         inputCorreo.value = d.correo || "";
-        inputRol.value = d.rol || "";
+
+        ["admin", "profesor"].forEach(rol => {
+          const option = document.createElement("option");
+          option.value = rol;
+          option.textContent = rol.charAt(0).toUpperCase() + rol.slice(1);
+          if (d.rol === rol) option.selected = true;
+          inputRol.appendChild(option);
+        });
 
         toggleInputs(false, [inputNombre, inputApellido, inputCorreo, inputRol]);
 
-        // Botón Editar
         const btnEditar = document.createElement("button");
         btnEditar.textContent = "✏️ Editar";
 
-        // Botón Guardar
         const btnGuardar = document.createElement("button");
         btnGuardar.textContent = "💾 Guardar";
         btnGuardar.style.display = "none";
 
-        btnEditar.onclick = () => {
-          btnEditar.style.display = "none";
-          btnGuardar.style.display = "inline";
-          toggleInputs(true, [inputNombre, inputApellido, inputCorreo, inputRol]);
-        };
+        const btnCancelarEdicion = document.createElement("button");
+btnCancelarEdicion.textContent = "❌ Cancelar";
+btnCancelarEdicion.style.display = "none";
+
+btnEditar.onclick = () => {
+  if (!window.esAdmin) return alert("Solo un administrador puede editar usuarios.");
+  btnEditar.style.display = "none";
+  btnGuardar.style.display = "inline";
+  btnCancelarEdicion.style.display = "inline";
+  toggleInputs(true, [inputNombre, inputApellido, inputCorreo, inputRol]);
+};
+
+btnCancelarEdicion.onclick = () => {
+  inputNombre.value = d.nombre || "";
+  inputApellido.value = d.apellido || "";
+  inputCorreo.value = d.correo || "";
+  inputRol.value = d.rol || "";
+  btnEditar.style.display = "inline";
+  btnGuardar.style.display = "none";
+  btnCancelarEdicion.style.display = "none";
+  toggleInputs(false, [inputNombre, inputApellido, inputCorreo, inputRol]);
+};
+
 
         btnGuardar.onclick = () => {
           const nuevoNombre = inputNombre.value.trim();
           const nuevoApellido = inputApellido.value.trim();
           const nuevoCorreo = inputCorreo.value.trim();
-          const nuevoRol = inputRol.value.trim();
+          const nuevoRol = inputRol.value;
 
           if (!nuevoNombre || !nuevoCorreo || !nuevoRol) {
             return alert("Completa al menos nombre, correo y rol.");
@@ -96,7 +115,6 @@ const Usuarios = (() => {
           });
         };
 
-        // Mostrar/Ocultar UID
         const spanUID = document.createElement("span");
         spanUID.textContent = "******";
 
@@ -108,39 +126,36 @@ const Usuarios = (() => {
           btnMostrarUID.textContent = oculto ? "🙈 Ocultar UID" : "👁️ Mostrar UID";
         };
 
-        // Botón Eliminar
         const btnEliminar = document.createElement("button");
         btnEliminar.textContent = "🗑️ Eliminar";
         btnEliminar.onclick = () => {
-  if (confirm("¿Eliminar este usuario?")) {
-    // 1. Eliminar datos en base de datos
-    db.ref(`Profesores/${uid}`).remove()
-      .then(() => {
-        // 2. Marcar para eliminación en Authentication (revisado por backend)
-        return db.ref(`EliminarUsuarios/${uid}`).set({
-          correo: d.correo,
-          nombre: d.nombre,
-          fecha: new Date().toISOString()
-        });
-      })
-      .then(() => {
-        alert("Usuario eliminado de la base de datos. Falta eliminar de Authentication.");
-        cargarUsuarios();
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Error al eliminar usuario.");
-      });
-  }
-};
+          if (!window.esAdmin) return alert("Solo un administrador puede eliminar usuarios.");
+          if (confirm("¿Eliminar este usuario?")) {
+            db.ref(`Profesores/${uid}`).remove()
+              .then(() => {
+                return db.ref(`EliminarUsuarios/${uid}`).set({
+                  correo: d.correo,
+                  nombre: d.nombre,
+                  fecha: new Date().toISOString()
+                });
+              })
+              .then(() => {
+                alert("Usuario eliminado de la base de datos. Falta eliminar de Authentication.");
+                cargarUsuarios();
+              })
+              .catch(err => {
+                console.error(err);
+                alert("Error al eliminar usuario.");
+              });
+          }
+        };
 
-
-        // Añadir todo al <li>
         li.append(
           lblNombre, document.createElement("br"),
           inputNombre, inputApellido, inputCorreo, inputRol, document.createElement("br"),
-          btnEditar, btnGuardar, btnMostrarUID, spanUID, btnEliminar
+          btnEditar, btnGuardar, btnCancelarEdicion, btnMostrarUID, spanUID, btnEliminar
         );
+
 
         listaUsuarios.appendChild(li);
       });
@@ -151,22 +166,22 @@ const Usuarios = (() => {
   }
 
   function iniciar() {
-    // Abre modal y carga usuarios
     botonUsuarios.addEventListener("click", () => {
-      closeAllModals?.(); // si está definida globalmente
+      closeAllModals?.();
       modalUsuarios.classList.add("mostrar");
       cargarUsuarios();
     });
 
-    // Agregar nuevo usuario
     btnAgregarUsuario.addEventListener("click", () => {
+      if (!window.esAdmin) return alert("Solo un administrador puede agregar usuarios.");
+
       const nombre = inputNuevoNombre.value.trim();
       const id = inputNuevoID.value.trim();
       const apellido = inputNuevoApellido.value.trim();
       const correo = inputNuevoCorreo.value.trim();
       const contraseña = inputNuevoContraseña.value;
       const confirmar = inputConfirmarContraseña.value;
-      const rol = inputNuevoRol.value.trim();
+      const rol = inputNuevoRol.value;
 
       if (!nombre || !correo || !contraseña || !confirmar || !rol || !id) {
         return alert("Completa todos los campos.");
@@ -176,12 +191,10 @@ const Usuarios = (() => {
         return alert("Las contraseñas no coinciden.");
       }
 
-      // Crear usuario con Firebase Authentication
       firebase.auth().createUserWithEmailAndPassword(correo, contraseña)
         .then(userCredential => {
           const uid = userCredential.user.uid;
 
-          // Guardar en la base de datos
           return db.ref(`Profesores/${uid}`).set({
             nombre,
             apellido,
@@ -193,7 +206,6 @@ const Usuarios = (() => {
         .then(() => {
           alert("Usuario registrado exitosamente.");
 
-          // Limpiar formulario
           inputNuevoNombre.value = "";
           inputNuevoID.value = "";
           inputNuevoApellido.value = "";
@@ -211,18 +223,16 @@ const Usuarios = (() => {
         });
     });
 
-    // Mostrar formulario de creación de usuario
     btnMostrarFormulario.addEventListener("click", () => {
+      if (!window.esAdmin) return alert("Solo un administrador puede ver el formulario de registro.");
       formCrearUsuario.style.display = "block";
     });
 
-    // Cerrar modal con botón ✖
     cerrarUsuarios.addEventListener("click", () => {
       modalUsuarios.classList.remove("mostrar");
       formUsr.style.display = "none";
     });
 
-    // Cerrar modal al hacer clic fuera de él
     window.addEventListener("click", e => {
       if (e.target === modalUsuarios) {
         modalUsuarios.classList.remove("mostrar");
@@ -230,13 +240,25 @@ const Usuarios = (() => {
       }
     });
 
-    // Opcional: cerrar modal con tecla ESC
     window.addEventListener("keydown", e => {
       if (e.key === "Escape" && modalUsuarios.classList.contains("mostrar")) {
         modalUsuarios.classList.remove("mostrar");
         formUsr.style.display = "none";
       }
     });
+
+    const btnCancelarCrearUsuario = document.getElementById("btnCancelarCrearUsuario");
+      btnCancelarCrearUsuario.addEventListener("click", () => {
+      formUsr.style.display = "none";
+      inputNuevoNombre.value = "";
+      inputNuevoID.value = "";
+      inputNuevoApellido.value = "";
+      inputNuevoCorreo.value = "";
+      inputNuevoContraseña.value = "";
+      inputConfirmarContraseña.value = "";
+      inputNuevoRol.value = "";
+    });
+
   }
 
   return { iniciar };
