@@ -373,4 +373,9 @@ select{
 }
 
 
-/*    */
+#botonHorarios {
+  right: 46%;
+  bottom: 40%;
+  /*transform: translateX(900%);*/
+}
+

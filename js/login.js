@@ -28,7 +28,7 @@ const Login = (() => {
       .then(cred => {
         cerrarModal();
         alert("Sesión iniciada correctamente.");
-        renderizarBoton();
+        // renderizarBoton y ocultar botones se harán en onAuthStateChanged
       })
       .catch(error => {
         console.error(error);
@@ -69,40 +69,46 @@ const Login = (() => {
     }
   }
 
-  // Ocultar botones para usuarios que no son admin
+  // Ocultar o mostrar botones de admin
   function ocultarBotonesAdmin() {
-  const botonLogin = document.getElementById("botonLogin");
-  const botonCerradura = document.getElementById("botonAgregarCerradura");
-  const botonUsuarios = document.getElementById("botonUsuarios");
+    const botonLoginEl = document.getElementById("botonLogin");
+    const botonCerradura = document.getElementById("botonAgregarCerradura");
+    const botonUsuarios = document.getElementById("botonUsuarios");
+    const botonHorarios = document.getElementById("botonHorarios");
 
-  if (!window.esAdmin) {
-    if (botonCerradura) botonCerradura.style.display = "none";
-    if (botonUsuarios) botonUsuarios.style.display = "none";
+    if (!window.esAdmin) {
+      if (botonCerradura) botonCerradura.style.display = "none";
+      if (botonUsuarios) botonUsuarios.style.display = "none";
 
-    // Mover login al fondo
-    if (botonLogin) botonLogin.style.bottom = "20px";
-  } else {
-    if (botonCerradura) {
-      botonCerradura.style.display = "block";
-      botonCerradura.style.bottom = "90px";
+      // Además, si no es admin pero inició sesión, mantenemos Horarios visible:
+      if (botonHorarios) botonHorarios.style.display = window.uid ? "block" : "none";
+
+      // Mover login al fondo
+      if (botonLoginEl) botonLoginEl.style.bottom = "20px";
+    } else {
+      // Para admin: asegurarse de que todo esté a la vista y en su posición
+      if (botonCerradura) {
+        botonCerradura.style.display = "block";
+        botonCerradura.style.bottom = "120px";
+      }
+      if (botonUsuarios) {
+        botonUsuarios.style.display = "block";
+        botonUsuarios.style.bottom = "50px";
+      }
+      if (botonHorarios) {
+        botonHorarios.style.display = "block";
+        //botonHorarios.style.bottom = "350px";
+      }
+      // Volver a colocar login más arriba
+      if (botonLoginEl) botonLoginEl.style.bottom = "200px";
     }
-
-    if (botonUsuarios) {
-      botonUsuarios.style.display = "block";
-      botonUsuarios.style.bottom = "20px";
-    }
-
-    // Volver a colocar login más arriba
-    if (botonLogin) botonLogin.style.bottom = "170px";
   }
-}
-
-
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       console.log("Usuario activo:", user.email);
       window.usuarioActivo = user;
+      window.uid = user.uid;
 
       // Leer el rol del usuario desde la base de datos
       db.ref(`Profesores/${user.uid}/rol`).once("value")
@@ -113,7 +119,9 @@ const Login = (() => {
           renderizarBoton();
           ocultarBotonesAdmin();
 
-          Cerraduras.iniciar(); // Iniciar sistema de cerraduras
+          // Iniciar módulo de cerraduras y horarios después de conocer el rol
+          Cerraduras.iniciar();
+          Horarios.iniciar();
         })
         .catch(err => {
           console.error("Error al verificar rol:", err);
@@ -123,16 +131,20 @@ const Login = (() => {
           ocultarBotonesAdmin();
 
           Cerraduras.iniciar();
+          Horarios.iniciar();
         });
 
     } else {
+      // No hay usuario
       window.usuarioActivo = null;
+      window.uid = null;
       window.esAdmin = false;
 
       renderizarBoton();
       ocultarBotonesAdmin();
 
       Cerraduras.iniciar();
+      Horarios.iniciar();
     }
   });
 
