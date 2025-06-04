@@ -1,4 +1,4 @@
-/* ─────────── GENERAL ─────────── */
+/* GENERAL */
 body {
   font-family: 'Inter', Arial, sans-serif;
   background: #2d70ff;
@@ -17,7 +17,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* ─────────── CERRADURA CARD ─────────── */
+/* CERRADURA CARD */
 .cerradura {
   border: 1px solid #ccc;
   padding: 15px;
@@ -80,7 +80,7 @@ select#ubicacionCerradura {
   font-size: 14px;
 }
 
-/* ─────────── BOTONES ─────────── */
+/* BOTONES */
 button {
   background-color: #ffffff;
   border: 1px solid #ccc;
@@ -110,14 +110,14 @@ button:hover {
   color: white;
 }
 
-/* ─────────── HISTORIAL ─────────── */
+/* HISTORIAL */
 .historial {
   text-align: left;
   font-size: 0.9em;
   color: #333;
 }
 
-/* ─────────── MODALES ─────────── */
+/* MODALES */
 .modal {
   display: none;
   position: fixed;
@@ -175,7 +175,7 @@ button:hover {
   font-size: 14px;
 }
 
-/* ─────────── BOTÓN CIERRE MODAL ─────────── */
+/* BOTÓN CIERRE MODAL */
 .close {
   position: absolute;
   right: 20px;
@@ -185,7 +185,7 @@ button:hover {
   font-weight: bold;
 }
 
-/* ─────────── BOTÓN FLOTANTE ─────────── */
+/* BOTÓN FLOTANTE */
 .boton-flotante {
   position: fixed;
   right: 20px;
@@ -209,14 +209,14 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* ─────────── LISTAS USUARIOS ─────────── */
+/* LISTAS USUARIOS */
 #listaUsuarios li {
   list-style-type: none;
   border-bottom: 1px solid #ddd;
   padding: 8px 0;
 }
 
-/* ─────────── INPUTS MODALES ─────────── */
+/* INPUTS MODALES */
 input[type="text"] {
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -248,7 +248,7 @@ select{
   padding: 6px;
 }
 
-/* ─────────── HORARIOS ─────────── */
+/* HORARIOS */
 .horario {
   background-color: #ffffff;
   border: 1px solid #ccc;
