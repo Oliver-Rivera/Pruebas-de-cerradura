@@ -1,4 +1,4 @@
-// 🔧 Configuración de Firebase 
+//Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBOFqGZprPCapjuuby1_Fh5mcBWSaPwDD0",
   authDomain: "control-acceso-9b227.firebaseapp.com",
@@ -14,7 +14,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 
-// 🧹 Función para cerrar y limpiar todos los modales
+// Función para cerrar y limpiar todos los modales
 function closeAllModals() {
   // Historial
   const modalHist = document.getElementById("modalHistorial");

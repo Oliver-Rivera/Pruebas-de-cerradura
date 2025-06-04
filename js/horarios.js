@@ -35,7 +35,7 @@ const Horarios = (() => {
     mostrarHorarios();
   }
 
-  // Cierra el modal y resetea campos 
+  // Cierra el modal y resetea campos
   function cerrarModal() {
     modal.classList.remove("mostrar");
     form.reset();
@@ -213,7 +213,7 @@ const Horarios = (() => {
     });
   }
 
-  // Inicializa los eventos y controla visibilidad del botón “🗓️ Horarios”
+  // Inicializa los eventos y controla visibilidad del botón “Horarios”
   function iniciar() {
     // Si no hay usuario logueado, oculto todo el botón
     if (!window.uid) {
