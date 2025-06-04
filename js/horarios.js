@@ -1,4 +1,3 @@
-// horarios.js
 const Horarios = (() => {
   const modal = document.getElementById("modalHorarios");
   const botonAbrir = document.getElementById("botonHorarios");
@@ -36,7 +35,7 @@ const Horarios = (() => {
     mostrarHorarios();
   }
 
-  // Cierra el modal y resetea campos (solo de ser necesario)
+  // Cierra el modal y resetea campos 
   function cerrarModal() {
     modal.classList.remove("mostrar");
     form.reset();
@@ -69,7 +68,7 @@ const Horarios = (() => {
     });
   }
 
-  // Registra un nuevo horario (solo admin)
+  // Registra un nuevo horario
   function agregarHorario(e) {
     e.preventDefault();
     if (!window.esAdmin) {
@@ -101,7 +100,7 @@ const Horarios = (() => {
     });
   }
 
-  // Actualiza un horario existente (solo admin)
+  // Actualiza un horario existente
   function actualizarHorario(id) {
     if (!window.esAdmin) {
       return alert("Solo un administrador puede editar horarios.");
@@ -183,7 +182,7 @@ const Horarios = (() => {
     });
   }
 
-  // Elimina un horario (solo admin)
+  // Elimina un horario
   function eliminarHorario(id) {
     db.ref(`Horarios/${id}`).remove().then(() => {
       alert("Horario eliminado.");
@@ -191,7 +190,7 @@ const Horarios = (() => {
     });
   }
 
-  // Carga datos de un horario en el formulario para editar (solo admin)
+  // Carga datos de un horario en el formulario para editar
   function editarHorario(id) {
     db.ref(`Horarios/${id}`).once("value").then(snap => {
       const h = snap.val();

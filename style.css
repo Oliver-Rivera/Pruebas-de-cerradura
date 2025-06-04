@@ -374,8 +374,13 @@ select{
 
 
 #botonHorarios {
+  position: fixed;
+  background-color: #ffffff;
+  color: #007bff;
+  border: 2px solid #007bff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
   right: 46%;
-  bottom: 40%;
-  /*transform: translateX(900%);*/
+  bottom: 40%;  font-size: 16px;
 }
-

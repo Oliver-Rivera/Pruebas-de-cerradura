@@ -1,4 +1,4 @@
-const Usuarios = (() => { 
+const Usuarios = (() => {
   const modalUsuarios = document.getElementById("modalUsuarios");
   const cerrarUsuarios = document.getElementById("cerrarUsuarios");
   const listaUsuarios = document.getElementById("listaUsuarios");
@@ -119,11 +119,11 @@ btnCancelarEdicion.onclick = () => {
         spanUID.textContent = "******";
 
         const btnMostrarUID = document.createElement("button");
-        btnMostrarUID.textContent = "👁️ Mostrar UID";
+        btnMostrarUID.textContent = " Mostrar UID";
         btnMostrarUID.onclick = () => {
           const oculto = spanUID.textContent === "******";
           spanUID.textContent = oculto ? uid : "******";
-          btnMostrarUID.textContent = oculto ? "🙈 Ocultar UID" : "👁️ Mostrar UID";
+          btnMostrarUID.textContent = oculto ? " Ocultar UID" : " Mostrar UID";
         };
 
         const btnEliminar = document.createElement("button");

@@ -4,10 +4,10 @@ const Login = (() => {
   const form = document.getElementById("formLogin");
   const inputCorreo = document.getElementById("correoLogin");
   const inputContraseña = document.getElementById("contraseñaLogin");
-  const botonLogin = document.getElementById("botonLogin"); // Botón login/logout
+  const botonLogin = document.getElementById("botonLogin");
 
   function abrir() {
-    closeAllModals?.(); // Por si tienes una función para cerrar otros modales
+    closeAllModals?.();
     modal.classList.add("mostrar");
   }
 
@@ -28,7 +28,6 @@ const Login = (() => {
       .then(cred => {
         cerrarModal();
         alert("Sesión iniciada correctamente.");
-        // renderizarBoton y ocultar botones se harán en onAuthStateChanged
       })
       .catch(error => {
         console.error(error);
@@ -80,13 +79,11 @@ const Login = (() => {
       if (botonCerradura) botonCerradura.style.display = "none";
       if (botonUsuarios) botonUsuarios.style.display = "none";
 
-      // Además, si no es admin pero inició sesión, mantenemos Horarios visible:
+      // Si no es admin pero inició sesión, mantenemos Horarios visible:
       if (botonHorarios) botonHorarios.style.display = window.uid ? "block" : "none";
 
-      // Mover login al fondo
       if (botonLoginEl) botonLoginEl.style.bottom = "20px";
     } else {
-      // Para admin: asegurarse de que todo esté a la vista y en su posición
       if (botonCerradura) {
         botonCerradura.style.display = "block";
         botonCerradura.style.bottom = "120px";
@@ -97,9 +94,7 @@ const Login = (() => {
       }
       if (botonHorarios) {
         botonHorarios.style.display = "block";
-        //botonHorarios.style.bottom = "350px";
       }
-      // Volver a colocar login más arriba
       if (botonLoginEl) botonLoginEl.style.bottom = "200px";
     }
   }

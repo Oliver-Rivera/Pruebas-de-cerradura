@@ -1,5 +1,4 @@
 const AgregarCerradura = (() => {
-  // Referencias a elementos del DOM
   const modal = document.getElementById("modalAgregarCerradura");
   const botonAbrir = document.getElementById("botonAgregarCerradura");
   const botonCerrar = document.getElementById("cerrarAgregarCerradura");
@@ -19,7 +18,7 @@ const AgregarCerradura = (() => {
   function toggleModal() {
     if (!window.esAdmin) return alert("Solo un administrador puede agregar cerraduras.");
 
-    closeAllModals(); // ← Esta función debe estar definida globalmente
+    closeAllModals();
     const visible = modal.classList.toggle("mostrar");
     if (!visible) limpiarFormulario();
   }
