@@ -23,7 +23,6 @@ const AgregarCerradura = (() => {
     if (!visible) limpiarFormulario();
   }
 
-  // Cierra el modal
   function cerrarModal() {
     modal.classList.remove("mostrar");
     limpiarFormulario();

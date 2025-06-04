@@ -151,7 +151,7 @@ button:hover {
   max-width: 500px;
   text-align: left;
   animation: fadeInModal 0.3s ease-out;
- max-height: 80vh;
+  max-height: 80vh;
   overflow-y: auto;
 
 }
