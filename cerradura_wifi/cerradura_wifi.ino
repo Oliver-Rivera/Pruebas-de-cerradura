@@ -6,10 +6,10 @@
 #include <WiFiUdp.h>
 
 #define RELAY_PIN D4
-#define WIFI_SSID "The_Game"
-#define WIFI_PASSWORD "perdiste"
-#define FIREBASE_HOST "https://control-acceso-9b227-default-rtdb.firebaseio.com"
-#define FIREBASE_AUTH "x8d9T04jCWGAL7A5dCXGtQcIrw6m4lAPzhcKrLZP"
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+#define FIREBASE_HOST "your-project-id.firebaseio.com"
+#define FIREBASE_AUTH "YOUR_FIREBASE_AUTH"
 
 // Pines RFID
 #define SS_PIN D2
