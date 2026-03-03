@@ -1,13 +1,12 @@
 //Configuración de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyBOFqGZprPCapjuuby1_Fh5mcBWSaPwDD0",
-  authDomain: "control-acceso-9b227.firebaseapp.com",
-  databaseURL: "https://control-acceso-9b227-default-rtdb.firebaseio.com",
-  projectId: "control-acceso-9b227",
-  storageBucket: "control-acceso-9b227.firebasestorage.app",
-  messagingSenderId: "515116159754",
-  appId: "1:515116159754:web:80d6608c16a1cde26d20f3",
-  measurementId: "G-GPDFRS6230"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 firebase.initializeApp(firebaseConfig);
